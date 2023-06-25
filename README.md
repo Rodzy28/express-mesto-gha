@@ -17,4 +17,4 @@
 
 ## Ссылка на репозиторий
 
-`https://github.com/Rodzy28/express-mesto-gha`
+* [Ссылка на репозиторий](https://github.com/Rodzy28/express-mesto-gha)
