@@ -5,7 +5,7 @@ const cardRoutes = require('./cards');
 router.use('/users', userRoutes);
 router.use('/cards', cardRoutes);
 router.use('/*', (req, res) => {
-  res.status(404).send('Page Not Found');
+  res.status(404).send({ message: 'Page Not Found' });
 });
 
 module.exports = router;
