@@ -36,8 +36,44 @@ const deleteCardById = (req, res) => {
     });
 };
 
+const likeCard = (req, res) => {
+  const { cardId } = req.params;
+  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+    .then((card) => {
+      if (!card) {
+        return res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки.' });
+      }
+      return res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для постановки лайка.' });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+    });
+};
+
+const dislikeCard = (req, res) => {
+  const { cardId } = req.params;
+  Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
+    .then((card) => {
+      if (!card) {
+        return res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки.' });
+      }
+      return res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для снятия лайка.' });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+    });
+};
+
 module.exports = {
   getCards,
   createCard,
   deleteCardById,
+  likeCard,
+  dislikeCard,
 };
