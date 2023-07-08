@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = require('../utils/errors');
 
@@ -25,20 +27,32 @@ const getUserById = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((newUser) => {
-      if (!name || !about || !avatar) {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя.' });
-      } else {
-        res.status(201).send(newUser);
-      }
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя.' });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
+
+  bcrypt.hash(password, 10)
+    .then((hashPassword) => {
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hashPassword,
+      })
+        .then((newUser) => {
+          res.status(201).send(newUser);
+        })
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+          }
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+        });
     });
 };
 
@@ -76,10 +90,38 @@ const updateUserAvatar = (req, res) => {
     });
 };
 
+const login = (req, res) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'mama-ya-programmist', { expiresIn: '7d' });
+      res.cookie('token', token, {
+        maxAge: 86400000,
+        httpOnly: true,
+        sameSite: true,
+      });
+      res.send(user);
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
+};
+
+const getCurrentUser = (req, res) => {
+  const { _id } = req.user;
+  User.findById(_id)
+    .then((user) => {
+      res.send(user);
+    })
+    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' }));
+};
+
 module.exports = {
   getUsers,
   getUserById,
   createUser,
   updateUserById,
   updateUserAvatar,
+  login,
+  getCurrentUser,
 };
