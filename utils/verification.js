@@ -5,7 +5,7 @@ const createUserVerification = celebrate({
     name: Joi.string().min(2).max(30).alphanum(),
     about: Joi.string().min(2).max(30).alphanum(),
     avatar: Joi.string(),
-    email: Joi.string().required(),
+    email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
 });
@@ -19,7 +19,7 @@ const loginVerification = celebrate({
 
 const getUserByIdVerification = celebrate({
   params: Joi.object().keys({
-    _id: Joi.string().required().length(24),
+    userId: Joi.string().required().length(24).hex(),
   }),
 });
 
