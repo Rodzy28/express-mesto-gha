@@ -10,6 +10,9 @@
   
 Остальные директории вспомогательные, создаются при необходимости разработчиком
 
+## Чеклист
+* [Ссылка чеклист](https://code.s3.yandex.net/web-developer/checklists-pdf/new-program/checklist_14.pdf)
+
 ## Запуск проекта
 
 `npm run start` — запускает сервер   
