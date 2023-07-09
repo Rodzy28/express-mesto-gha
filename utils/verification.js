@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-escape */
 const { Joi, celebrate } = require('celebrate');
 
-const reg = /https?:\/\/[a-z0-9-._~:\/?#[\]@!$&'()*+,;=]*/;
+const reg = /https?:\/\/[a-z0-9-._~:\/?#[\]@!$&'()*+,;=]*\.[a-z0-9-._~:\/?#[\]@!$&'()*+,;=]*/;
 
 const createUserVerification = celebrate({
   body: Joi.object().keys({
