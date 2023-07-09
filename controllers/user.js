@@ -38,7 +38,7 @@ const createUser = (req, res, next) => {
   } = req.body;
 
   if (!email || !password) {
-    throw new BadRequestError('Не заполнены обязательные поля');
+    throw new BadRequestError('Не заполнены обязательные поля.');
   }
 
   bcrypt.hash(password, 10)
@@ -51,7 +51,7 @@ const createUser = (req, res, next) => {
         password: hashPassword,
       })
         .then((newUser) => {
-          res.status(201).send(newUser);
+          res.status(201).send(newUser.deletePassword());
         })
         .catch((err) => {
           if (err.name === 'ValidationError') {
@@ -109,7 +109,7 @@ const login = (req, res, next) => {
         httpOnly: true,
         sameSite: true,
       });
-      res.send(user);
+      res.send(user.deletePassword());
     })
     .catch(next);
 };
