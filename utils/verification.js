@@ -40,7 +40,7 @@ const updateUserAvatarVerification = celebrate({
 const createCardVerification = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().required(),
+    link: Joi.string().required().regex(/https?:\/\/[a-z0-9-._~:\/?#[\]@!$&'()*+,;=]*/),
   }),
 });
 
