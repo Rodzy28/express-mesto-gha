@@ -1,10 +1,11 @@
+/* eslint-disable no-useless-escape */
 const { Joi, celebrate } = require('celebrate');
 
 const createUserVerification = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().regex(/https?:\/\/[a-z0-9-._~:\/?#[\]@!$&'()*+,;=]*/),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
@@ -32,7 +33,7 @@ const updateUserByIdVerification = celebrate({
 
 const updateUserAvatarVerification = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string(),
+    avatar: Joi.string().regex(/https?:\/\/[a-z0-9-._~:\/?#[\]@!$&'()*+,;=]*/),
   }),
 });
 
