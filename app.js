@@ -8,14 +8,14 @@ const router = require('./routes');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
 app.use(limiter);
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
+mongoose.connect(DB_URL, {
   useNewUrlParser: true,
 });
 

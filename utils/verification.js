@@ -1,11 +1,13 @@
 /* eslint-disable no-useless-escape */
 const { Joi, celebrate } = require('celebrate');
 
+const reg = /https?:\/\/[a-z0-9-._~:\/?#[\]@!$&'()*+,;=]*/;
+
 const createUserVerification = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(/https?:\/\/[a-z0-9-._~:\/?#[\]@!$&'()*+,;=]*/),
+    avatar: Joi.string().regex(reg),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
@@ -20,7 +22,7 @@ const loginVerification = celebrate({
 
 const getUserByIdVerification = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required().length(24),
+    userId: Joi.string().required().length(24).hex(),
   }),
 });
 
@@ -33,20 +35,20 @@ const updateUserByIdVerification = celebrate({
 
 const updateUserAvatarVerification = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().regex(/https?:\/\/[a-z0-9-._~:\/?#[\]@!$&'()*+,;=]*/),
+    avatar: Joi.string().regex(reg),
   }),
 });
 
 const createCardVerification = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().required().regex(/https?:\/\/[a-z0-9-._~:\/?#[\]@!$&'()*+,;=]*/),
+    link: Joi.string().required().regex(reg),
   }),
 });
 
 const likeDislikeAndDeleteVerification = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().required().length(24),
+    cardId: Joi.string().required().length(24).hex(),
   }),
 });
 
