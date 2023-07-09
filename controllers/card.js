@@ -27,22 +27,26 @@ const createCard = (req, res) => {
 
 const deleteCardById = (req, res) => {
   const { cardId } = req.params;
-  Card.findByIdAndDelete(cardId)
+
+  Card.findById(cardId)
     .then((card) => {
       if (!card) {
         return res.status(NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена.' });
       }
-      if (card.owner !== req.user._id) {
+      if (card.owner.toString() !== req.user._id) {
         return res.send({ message: 'Нельзя удалять чужие карточки!' });
       }
-      return res.send(card);
+
+      return Card.findByIdAndDelete(cardId)
+        .then(() => res.status(200).send(card))
+        .catch((err) => {
+          if (err.name === 'CastError') {
+            res.status(BAD_REQUEST).send({ message: 'Некорректный запрос' });
+          }
+          return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+        });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(BAD_REQUEST).send({ message: 'Некорректный запрос' });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
-    });
+    .catch((err) => err.message);
 };
 
 const likeCard = (req, res) => {
